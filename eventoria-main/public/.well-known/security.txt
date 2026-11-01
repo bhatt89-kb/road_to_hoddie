@@ -1,0 +1,34 @@
+Contact: mailto:security@eventoria.example.com
+Expires: 2027-12-31T23:59:59.000Z
+Preferred-Languages: en
+Canonical: https://eventoria.example.com/.well-known/security.txt
+
+# Security Policy for Eventoria Event Planning Application
+# 
+# If you discover a security vulnerability, please report it responsibly.
+# 
+# Scope:
+# - Input validation bypass
+# - Authentication or authorization issues
+# - XSS, CSRF, or injection vulnerabilities
+# - Rate limiting bypass
+# - API security issues
+# 
+# Out of Scope:
+# - Social engineering attacks
+# - Denial of Service (DoS/DDoS)
+# - Issues in third-party dependencies (report to maintainers)
+# 
+# Response Time:
+# - Initial response: 48 hours
+# - Status update: 7 days
+# - Resolution target: 30 days for critical issues
+# 
+# Please include:
+# - Description of the vulnerability
+# - Steps to reproduce
+# - Potential impact
+# - Suggested remediation (optional)
+
+Acknowledgments: https://eventoria.example.com/security/acknowledgments
+Policy: https://eventoria.example.com/security/policy

@@ -12,6 +12,7 @@ import { checkPlanningScope } from "@/lib/guardrails";
 import { askQuestion, getModelForTier } from "@/lib/gemini";
 import { askCache } from "@/lib/cache";
 import { measureAsync } from "@/lib/performance";
+import { readJsonBody, formatIssues } from "@/lib/http";
 import type { ApiErrorResponse, AskApiResponse, GeminiModel } from "@/types/event";
 
 export async function POST(request: Request): Promise<NextResponse<AskApiResponse | ApiErrorResponse>> {
@@ -29,24 +30,17 @@ export async function POST(request: Request): Promise<NextResponse<AskApiRespons
       );
     }
 
-    let body: unknown;
-    try {
-      body = await request.json();
-    } catch {
+    const parsed = await readJsonBody(request);
+    if (!parsed.ok) {
       return NextResponse.json(
-        {
-          error: "Malformed JSON payload.",
-          code: "INVALID_JSON",
-        },
-        { status: 400, headers: rateCheck.headers }
+        { error: parsed.error, code: parsed.code },
+        { status: parsed.status, headers: rateCheck.headers }
       );
     }
 
-    const validation = askRequestSchema.safeParse(body);
+    const validation = askRequestSchema.safeParse(parsed.body);
     if (!validation.success) {
-      const details = validation.error.issues
-        .map((i) => `${i.path.join(".")}: ${i.message}`)
-        .join("; ");
+      const details = formatIssues(validation.error.issues);
 
       return NextResponse.json(
         {

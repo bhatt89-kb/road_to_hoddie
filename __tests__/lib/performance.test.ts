@@ -263,7 +263,7 @@ describe('Performance Monitoring', () => {
 
     it('should call gtag if available', () => {
       const mockGtag = vi.fn();
-      (global as any).window = { gtag: mockGtag };
+      (globalThis as unknown as { window?: unknown }).window = { gtag: mockGtag };
 
       reportWebVitals({
         id: 'v1-test',
@@ -277,7 +277,7 @@ describe('Performance Monitoring', () => {
         event_category: 'Web Vitals',
       }));
 
-      delete (global as any).window;
+      delete (globalThis as unknown as { window?: unknown }).window;
     });
   });
 

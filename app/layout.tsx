@@ -1,8 +1,24 @@
 import type { Metadata, Viewport } from "next";
+import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { SkipLink } from "@/components/ui/SkipLink";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+
+// Self-hosted at build time by next/font: no render-blocking @import, no
+// third-party font requests at runtime, and no layout shift (size-adjusted fallback).
+const fontSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  display: "swap",
+  variable: "--font-plus-jakarta",
+});
+
+const fontMono = JetBrains_Mono({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-jetbrains-mono",
+});
 
 export const metadata: Metadata = {
   title: "Eventoria — GenAI Celebration & Event Planner",
@@ -53,15 +69,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="format-detection" content="telephone=no" />
-      </head>
+    <html
+      lang="en"
+      className={`${fontSans.variable} ${fontMono.variable}`}
+      suppressHydrationWarning
+    >
       <body>
         <SkipLink targetId="main-content" />
         <Header />
-        <main id="main-content" style={{ flex: 1 }}>
+        <main id="main-content" tabIndex={-1} style={{ flex: 1, outline: "none" }}>
           {children}
         </main>
         <Footer />

@@ -264,8 +264,11 @@ export function reportWebVitals(metric: {
   });
 
   // Send to analytics service
-  if (typeof window !== 'undefined' && (window as any).gtag) {
-    (window as any).gtag('event', metric.name, {
+  const gtag = typeof window !== 'undefined'
+    ? (window as Window & { gtag?: (...args: unknown[]) => void }).gtag
+    : undefined;
+  if (gtag) {
+    gtag('event', metric.name, {
       value: Math.round(metric.name === 'CLS' ? metric.value * 1000 : metric.value),
       event_category: metric.label === 'web-vital' ? 'Web Vitals' : 'Custom',
       event_label: metric.id,
@@ -535,7 +538,10 @@ export function getPerformanceSummary(): Record<string, {
   successRate: number;
 }> {
   const allMetrics = getMetrics();
-  const summary: Record<string, any> = {};
+  const summary: Record<
+    string,
+    { count: number; mean: number; p95: number; successRate: number }
+  > = {};
 
   // Group by metric name
   const grouped = allMetrics.reduce((acc, metric) => {

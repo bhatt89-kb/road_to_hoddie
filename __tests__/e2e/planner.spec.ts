@@ -202,7 +202,7 @@ test.describe('Chat Interface E2E', () => {
     await page.goto('/chat');
     
     // Click a starter prompt chip
-    await page.click('[data-starter-prompt]').first();
+    await page.locator('[data-starter-prompt]').first().click();
     
     // Message should be sent automatically
     await expect(page.locator('[role="log"]')).not.toBeEmpty({ timeout: 10000 });

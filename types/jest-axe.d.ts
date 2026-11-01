@@ -1,3 +1,7 @@
+/**
+ * Ambient type declarations for `jest-axe` (the package ships without types).
+ * The matching Vitest matcher augmentation lives in `types/vitest-axe.d.ts`.
+ */
 declare module 'jest-axe' {
   import { type AxeResults } from 'axe-core';
 
@@ -15,18 +19,11 @@ declare module 'jest-axe' {
 
   export function configureAxe(options: JestAxeConfigureOptions): typeof axe;
 
-  export function toHaveNoViolations(results: AxeResults): {
-    message: () => string;
-    pass: boolean;
+  /** Matcher map to pass to `expect.extend()` */
+  export const toHaveNoViolations: {
+    toHaveNoViolations(results: AxeResults): {
+      message: () => string;
+      pass: boolean;
+    };
   };
-}
-
-// Extend Vitest's Assertion interface to include toHaveNoViolations
-declare module 'vitest' {
-  interface Assertion<T = any> {
-    toHaveNoViolations(): T;
-  }
-  interface AsymmetricMatchersContaining {
-    toHaveNoViolations(): any;
-  }
 }

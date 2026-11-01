@@ -34,8 +34,8 @@ export default function NotFound() {
         color: 'var(--color-text-secondary)',
         maxWidth: '500px',
       }}>
-        The page you're looking for doesn't exist or has been moved. 
-        Let's get you back to planning amazing celebrations!
+        The page you&apos;re looking for doesn&apos;t exist or has been moved. 
+        Let&apos;s get you back to planning amazing celebrations!
       </p>
       <Link href="/">
         <Button variant="primary" size="lg">

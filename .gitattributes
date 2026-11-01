@@ -1,0 +1,6 @@
+# Normalise line endings so diffs are clean across Windows/macOS/Linux
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.ico binary
+*.ps1 text eol=crlf

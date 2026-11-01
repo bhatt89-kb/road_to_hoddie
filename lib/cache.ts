@@ -10,6 +10,7 @@
  */
 
 import { config } from './config';
+import type { PlanApiResponse } from '@/types/event';
 import { CACHE_TTL_MS, CACHE_MAX_SIZE } from './constants';
 
 // ============================================================================
@@ -482,7 +483,7 @@ export class LRUCache<K, V> {
  * Singleton cache for event plans
  * Uses adaptive eviction strategy for optimal performance
  */
-export const planCache = new LRUCache<string, any>({
+export const planCache = new LRUCache<string, PlanApiResponse>({
   maxSize: CACHE_MAX_SIZE.PLAN,
   ttl: CACHE_TTL_MS.PLAN,
   maxMemorySize: 10 * 1024 * 1024, // 10 MB

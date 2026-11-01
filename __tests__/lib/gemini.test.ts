@@ -7,6 +7,7 @@ import {
   getModelForTier,
 } from "@/lib/gemini";
 import type { EventPlanRequest } from "@/types/event";
+import { createMessageId } from "@/types/event";
 import { REQUIRED_CATEGORIES } from "@/lib/constants";
 
 describe("getModelForTier", () => {
@@ -81,7 +82,7 @@ describe("generateEventPlan and askQuestion fallbacks when no API key configured
 
   it("streams chat chunks as an async generator", async () => {
     const generator = streamChat([
-      { id: "1", role: "user", content: "Hello", timestamp: Date.now() },
+      { id: createMessageId("1"), role: "user", content: "Hello", timestamp: Date.now() },
     ]);
 
     const collected: string[] = [];

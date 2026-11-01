@@ -6,11 +6,16 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "next lint --dir app --dir components --dir hooks --dir lib --dir types --dir __tests__",
+    "lint:fix": "npm run lint -- --fix",
     "type-check": "tsc --noEmit",
+    "type-check:tests": "tsc --noEmit -p tsconfig.test.json",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:a11y": "vitest run __tests__/accessibility",
+    "test:e2e": "playwright test",
+    "validate": "npm run type-check && npm run type-check:tests && npm run lint && npm test"
   },
   "dependencies": {
     "@google/genai": "^0.7.0",
@@ -37,5 +42,8 @@
     "jsdom": "^25.0.1",
     "typescript": "^5.7.2",
     "vitest": "^2.1.8"
+  },
+  "engines": {
+    "node": ">=18.18.0"
   }
 }

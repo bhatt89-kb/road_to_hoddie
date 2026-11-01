@@ -209,7 +209,7 @@ describe('Load Testing Scenarios', () => {
   });
 
   it('should maintain performance under cache pressure', () => {
-    const cache = new LRUCache<string, any>({ maxSize: 50, ttl: 60000 });
+    const cache = new LRUCache<string, { data: string }>({ maxSize: 50, ttl: 60000 });
     
     const timer = startTimer();
     

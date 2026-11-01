@@ -541,6 +541,8 @@ export interface PlanApiResponse {
     readonly model: GeminiModel;
   };
   readonly metadata?: GenerationMetadata;
+  /** True when the response was served from the in-memory plan cache */
+  readonly cached?: boolean;
 }
 
 /**

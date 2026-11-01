@@ -5,7 +5,7 @@
 <div align="center">
 
 ![Eventoria Logo](https://img.shields.io/badge/Eventoria-GenAI%20Event%20Planner-d97706?style=for-the-badge)
-[![Next.js](https://img.shields.io/badge/Next.js-16.4.2-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![Gemini AI](https://img.shields.io/badge/Gemini-2.5%20Flash-4285F4?style=flat-square&logo=google)](https://ai.google.dev/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
@@ -191,14 +191,24 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### 4. Run Test Suite
 ```bash
-# Run all 91 Vitest unit, API, component, and journey integration tests
+# Run all Vitest unit, API, component, accessibility and journey integration tests
 npm test
 
-# Run TypeScript strict type verification
-npm run type-check
+# Run only the jest-axe accessibility suite
+npm run test:a11y
 
-# Run ESLint check
+# Run Playwright end-to-end tests (starts the app automatically; first run: npx playwright install chromium)
+npm run test:e2e -- --project=chromium
+
+# Run TypeScript strict type verification (app code, then test code)
+npm run type-check
+npm run type-check:tests
+
+# Run ESLint check (app, components, hooks, lib, types and tests)
 npm run lint
+
+# Run the whole local gate in one go (type-check, test type-check, lint, unit tests)
+npm run validate
 
 # Build production bundle
 npm run build
@@ -208,7 +218,7 @@ npm run build
 
 ## 🧪 Test Suite Summary
 
-**Total Coverage:** 150+ tests across 25+ test suites
+**Total Coverage:** 200+ Vitest test cases across 24 test files, plus 28 Playwright end-to-end cases (2 specs)
 
 The repository includes a comprehensive 5-tier test pyramid:
 
@@ -286,7 +296,7 @@ The repository includes a comprehensive 5-tier test pyramid:
    - Return to `/planner`, click **"Export JSON"** to download the plan, and click **"Print / PDF"** to preview the clean printable layout.
 5. **Data Privacy & Conclusion (2:45 - 3:00):**
    - Click **"Clear Data"** and confirm deletion; show that localStorage is cleanly wiped.
-   - Show clean test suite (`npm test`: 91 passed) and clean lint (`npm run lint`: 0 errors).
+   - Show the full local gate passing (`npm run validate`: type-check, test type-check, lint, unit tests).
 
 ---
 

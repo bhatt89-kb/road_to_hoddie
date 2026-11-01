@@ -9,7 +9,8 @@ import { chatRequestSchema } from "@/lib/validators";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limiter";
 import { checkPlanningScope } from "@/lib/guardrails";
 import { streamChat } from "@/lib/gemini";
-import { LIMITS } from "@/lib/constants";
+import { readJsonBody, formatIssues } from "@/lib/http";
+import { createMessageId } from "@/types/event";
 import type { ApiErrorResponse } from "@/types/event";
 
 export async function POST(request: Request): Promise<Response> {
@@ -27,32 +28,18 @@ export async function POST(request: Request): Promise<Response> {
     });
   }
 
-  let body: unknown;
-  try {
-    const contentLength = request.headers.get("content-length");
-    if (contentLength && parseInt(contentLength, 10) > LIMITS.MAX_REQUEST_BODY_BYTES) {
-      return NextResponse.json(
-        { error: "Request body too large.", code: "PAYLOAD_TOO_LARGE" },
-        { status: 413 }
-      );
-    }
-    body = await request.json();
-  } catch {
-    const errorResponse: ApiErrorResponse = {
-      error: "Malformed JSON payload.",
-      code: "INVALID_JSON",
-    };
+  const parsed = await readJsonBody(request);
+  if (!parsed.ok) {
+    const errorResponse: ApiErrorResponse = { error: parsed.error, code: parsed.code };
     return NextResponse.json(errorResponse, {
-      status: 400,
+      status: parsed.status,
       headers: rateCheck.headers,
     });
   }
 
-  const validation = chatRequestSchema.safeParse(body);
+  const validation = chatRequestSchema.safeParse(parsed.body);
   if (!validation.success) {
-    const details = validation.error.issues
-      .map((i) => `${i.path.join(".")}: ${i.message}`)
-      .join("; ");
+    const details = formatIssues(validation.error.issues);
 
     const errorResponse: ApiErrorResponse = {
       error: "Invalid chat request format.",
@@ -66,10 +53,10 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   const { messages: rawMessages, eventContext } = validation.data;
-  // Cast string IDs to branded MessageId type for internal use
-  const messages = rawMessages.map(msg => ({
+  // Convert validated string IDs to the branded MessageId type for internal use
+  const messages = rawMessages.map((msg) => ({
     ...msg,
-    id: msg.id as any as import("@/types/event").MessageId
+    id: createMessageId(msg.id),
   }));
   const lastUserMessage = [...messages].reverse().find((m) => m.role === "user");
 

@@ -62,7 +62,7 @@ describe('Guardrails End-to-End Tests', () => {
 
       // The prompt should have wrapped dangerous input in <user_input> tags
       // This prevents the LLM from interpreting it as instructions
-      const callArgs = (generateEventPlan as any).mock.calls[0][0];
+      const callArgs = vi.mocked(generateEventPlan).mock.calls[0][0];
       expect(callArgs).toBeDefined();
       expect(callArgs.description).toBeDefined();
       // The actual wrapping happens in buildPlanPrompt, which is tested separately

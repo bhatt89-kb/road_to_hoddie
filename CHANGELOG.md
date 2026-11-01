@@ -303,10 +303,28 @@ All notable changes and phase transitions are recorded here.
 - All security headers, content security policy, and rate limits verified.
 - Complete documentation in `README.md` and `PLAN.md`.
 
+---
 
+## [Phase 9] — Evaluation Hardening
+**Date:** 2026-11-01
+**Status:** Completed
 
+### Fixed
+- Removed a stale nested duplicate of the whole project (`eventoria-main/eventoria-main/`) that broke `npm run type-check` and bloated the repository.
+- Replaced the incompatible flat `eslint.config.mjs` (written for newer Next.js) with `.eslintrc.json` so `npm run lint` works on Next.js 14 / ESLint 8; lint now also covers `hooks/`, `types/` and `__tests__/`.
+- Resolved all `no-explicit-any`, `ban-ts-comment` and `react/no-unescaped-entities` findings; replaced `as any` branded-ID casts with `createMessageId()` and typed `planCache` as `LRUCache<string, PlanApiResponse>`.
+- Fixed `types/jest-axe.d.ts`, which unintentionally *replaced* Vitest's type declarations instead of augmenting them (split into `jest-axe.d.ts` + `vitest-axe.d.ts`), plus two genuine type errors in tests.
+- CI referenced scripts that did not exist (`test:e2e`, `test:a11y`, `lighthouse`); added the scripts and rewrote the workflow around commands that exist.
 
+### Security
+- New `lib/http.ts`: JSON bodies are now read as a stream with a hard 64 KB cap on `/api/plan`, `/api/chat` and `/api/ask`. Previously `/api/ask` had no cap and the others trusted the client-supplied `Content-Length` header.
+- Tightened the Content-Security-Policy (no third-party origins, `object-src 'none'`, no wildcard `https:` images, `unsafe-eval` only in development) and added `Permissions-Policy`, `Cross-Origin-Opener-Policy` and `Cross-Origin-Resource-Policy`.
 
+### Performance & Accessibility
+- Replaced the render-blocking Google Fonts `@import` with self-hosted `next/font` (no third-party font requests, no layout shift).
+- `<main>` is now programmatically focusable so the skip link moves keyboard focus reliably; removed obsolete/duplicate `<head>` meta tags.
 
-
-
+### Tests & Tooling
+- Added `__tests__/lib/http.test.ts` (size cap, falsified `Content-Length`, malformed/empty JSON, UTF-8).
+- Added `tsconfig.test.json` and `npm run type-check:tests` so test code is type-checked; added `npm run validate`.
+- Added `.gitattributes` (LF line endings) and moved planning/ops files into `docs/` and `scripts/`.

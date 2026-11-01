@@ -12,7 +12,7 @@ import { classifyQuery } from "@/lib/classifier";
 import { generateEventPlan } from "@/lib/gemini";
 import { planCache, LRUCache } from "@/lib/cache";
 import { measureAsync } from "@/lib/performance";
-import { LIMITS } from "@/lib/constants";
+import { readJsonBody, formatIssues } from "@/lib/http";
 import type { ApiErrorResponse, PlanApiResponse } from "@/types/event";
 
 export async function POST(request: Request): Promise<NextResponse<PlanApiResponse | ApiErrorResponse>> {
@@ -36,31 +36,17 @@ export async function POST(request: Request): Promise<NextResponse<PlanApiRespon
       );
     }
 
-    let body: unknown;
-    try {
-      const contentLength = request.headers.get("content-length");
-      if (contentLength && parseInt(contentLength, 10) > LIMITS.MAX_REQUEST_BODY_BYTES) {
-        return NextResponse.json(
-          { error: "Request body too large.", code: "PAYLOAD_TOO_LARGE" },
-          { status: 413 }
-        );
-      }
-      body = await request.json();
-    } catch {
+    const parsed = await readJsonBody(request);
+    if (!parsed.ok) {
       return NextResponse.json(
-        {
-          error: "Malformed JSON payload.",
-          code: "INVALID_JSON",
-        },
-        { status: 400, headers: rateCheck.headers }
+        { error: parsed.error, code: parsed.code },
+        { status: parsed.status, headers: rateCheck.headers }
       );
     }
 
-    const validation = eventPlanRequestSchema.safeParse(body);
+    const validation = eventPlanRequestSchema.safeParse(parsed.body);
     if (!validation.success) {
-      const details = validation.error.issues
-        .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
-        .join("; ");
+      const details = formatIssues(validation.error.issues);
 
       return NextResponse.json(
         {
